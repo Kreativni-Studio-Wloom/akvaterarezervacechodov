@@ -275,7 +275,59 @@ export default function TableGrid({ onTableSelect, selectedTables, isAdmin = fal
 
   // --- UI ---
   return (
-    <div className="max-w-full mx-auto p-4 overflow-x-auto select-none" onMouseUp={handleMouseUp}>
+    <div className="w-full max-w-full mx-auto px-1 sm:px-4 overflow-x-auto select-none" onMouseUp={handleMouseUp}>
+      <div
+        className="inline-block"
+        style={{ minWidth: gridWidth * 28, maxWidth: '100vw' }}
+      >
+        <div
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${gridWidth}, minmax(20px, 1fr))`,
+            width: gridWidth * 28,
+            maxWidth: '100vw',
+            margin: '0 auto',
+          }}
+        >
+          {grid.flat().map((table, idx) => {
+            const x = idx % gridWidth;
+            const y = Math.floor(idx / gridWidth);
+            if (table) {
+              return (
+                <div
+                  key={table.id}
+                  className={`
+                    w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-none flex items-center justify-center text-[10px] sm:text-xs font-bold text-black
+                    ${getTableColor(table, reservations)}
+                    ${table.status === 'available' && !isAdmin && !editorMode ? 'cursor-pointer' : ''}
+                    ${editorMode ? 'cursor-pointer ring-2 ring-blue-400' : ''}
+                    ${editorMode && editorSelected.includes(table.id) ? 'ring-4 ring-yellow-400' : ''}
+                    transition-all duration-200
+                  `}
+                  onClick={() => editorMode ? handleEditorTableClick(table) : handleTableClick(table)}
+                  onMouseDown={() => handleMouseDown(x, y, false)}
+                  onMouseEnter={() => handleMouseEnter(x, y, false)}
+                  title={getTableTooltip(table, reservations)}
+                  style={{border: '1px solid #222'}}
+                >
+                  {table.status === 'entrance' ? 'V' : 
+                   table.status === 'permanent' ? '' : 
+                   (editorMode && editorSelected.includes(table.id)) ? '✓' :
+                   selectedTables.includes(table.id) ? '✓' : ''}
+                </div>
+              );
+            }
+            const isSelected = editorMode && emptySelected.some(pos => pos.x === x && pos.y === y);
+            return (
+              <div key={idx} className={`w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-transparent ${editorMode ? 'cursor-pointer ring-2 ring-green-400' : ''} ${isSelected ? 'ring-4 ring-yellow-400' : ''}`}
+                onClick={() => editorMode ? handleEmptyCellClick(x, y) : undefined}
+                onMouseDown={() => editorMode ? handleMouseDown(x, y, true) : undefined}
+                onMouseEnter={() => editorMode ? handleMouseEnter(x, y, true) : undefined}
+              />
+            );
+          })}
+        </div>
+      </div>
       {/* Hromadná změna stavu */}
       {editorMode && editorSelected.length > 0 && (
         <div className="mb-2 flex gap-2 items-center">
@@ -300,47 +352,6 @@ export default function TableGrid({ onTableSelect, selectedTables, isAdmin = fal
           </button>
         </div>
       )}
-      <div className="grid grid-cols-24 gap-0 bg-gray-100 p-0 rounded-lg border border-gray-300" style={{width: 'fit-content'}}>
-        {grid.flat().map((table, idx) => {
-          const x = idx % gridWidth;
-          const y = Math.floor(idx / gridWidth);
-          if (table) {
-            return (
-              <div
-                key={table.id}
-                className={`
-                  w-8 h-8 sm:w-10 sm:h-10 rounded-none flex items-center justify-center text-xs font-bold text-black
-                  ${getTableColor(table, reservations)}
-                  ${table.status === 'available' && !isAdmin && !editorMode ? 'cursor-pointer' : ''}
-                  ${editorMode ? 'cursor-pointer ring-2 ring-blue-400' : ''}
-                  ${editorMode && editorSelected.includes(table.id) ? 'ring-4 ring-yellow-400' : ''}
-                  transition-all duration-200
-                `}
-                onClick={() => editorMode ? handleEditorTableClick(table) : handleTableClick(table)}
-                onMouseDown={() => handleMouseDown(x, y, false)}
-                onMouseEnter={() => handleMouseEnter(x, y, false)}
-                title={getTableTooltip(table, reservations)}
-                style={{border: '1px solid #222'}}
-              >
-                {table.status === 'entrance' ? 'V' : 
-                 table.status === 'permanent' ? '' : 
-                 (editorMode && editorSelected.includes(table.id)) ? '✓' :
-                 selectedTables.includes(table.id) ? '✓' : ''}
-              </div>
-            );
-          } else {
-            const isSelected = editorMode && emptySelected.some(pos => pos.x === x && pos.y === y);
-            return (
-              <div key={idx} className={`w-8 h-8 sm:w-10 sm:h-10 bg-transparent ${editorMode ? 'cursor-pointer ring-2 ring-green-400' : ''} ${isSelected ? 'ring-4 ring-yellow-400' : ''}`}
-                onClick={() => editorMode ? handleEmptyCellClick(x, y) : undefined}
-                onMouseDown={() => editorMode ? handleMouseDown(x, y, true) : undefined}
-                onMouseEnter={() => editorMode ? handleMouseEnter(x, y, true) : undefined}
-              />
-            );
-          }
-        })}
-      </div>
-
       {/* Dialog pro přidání nového pole */}
       {addDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">

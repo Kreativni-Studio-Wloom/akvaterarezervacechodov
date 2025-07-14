@@ -1,8 +1,8 @@
 export default function TableLegend() {
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-4 text-black">Plán stolů</h2>
-      <div className="flex flex-wrap gap-4 text-sm text-black">
+      <h2 className="text-xl font-semibold mb-4 text-black text-center">Plán stolů</h2>
+      <div className="flex flex-wrap gap-4 text-sm text-black justify-center text-center">
         <div className="flex items-center space-x-2">
           <div className="w-4 h-4 bg-blue-600 rounded"></div>
           <span className="text-black">Volné stoly</span>
