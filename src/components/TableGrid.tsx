@@ -275,7 +275,7 @@ export default function TableGrid({ onTableSelect, selectedTables, isAdmin = fal
 
   // --- UI ---
   return (
-    <div className="w-full max-w-full mx-auto px-1 sm:px-4 overflow-x-auto select-none" onMouseUp={handleMouseUp}>
+    <div className="w-full max-w-full mx-auto px-1 sm:px-4 overflow-x-auto select-none flex justify-center" onMouseUp={handleMouseUp}>
       <div
         className="inline-block"
         style={{ minWidth: gridWidth * 28, maxWidth: '100vw' }}
