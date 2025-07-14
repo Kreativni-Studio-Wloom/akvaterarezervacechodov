@@ -10,6 +10,7 @@ interface TableGridProps {
   isAdmin?: boolean;
   editorMode?: boolean;
   onEditTable?: (table: Table) => void;
+  onTableReservationClick?: (tableId: string) => void; // nový prop
 }
 
 const getTableColor = (table: Table, reservations: Reservation[]) => {
@@ -59,7 +60,7 @@ const getTableTooltip = (table: Table, reservations: Reservation[]) => {
   return 'Volný stůl';
 };
 
-export default function TableGrid({ onTableSelect, selectedTables, isAdmin = false, editorMode = false, onEditTable }: TableGridProps) {
+export default function TableGrid({ onTableSelect, selectedTables, isAdmin = false, editorMode = false, onEditTable, onTableReservationClick }: TableGridProps) {
   const [tables, setTables] = useState<Table[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -206,13 +207,17 @@ export default function TableGrid({ onTableSelect, selectedTables, isAdmin = fal
       setEditDialog({ table, open: true });
       return;
     }
-    if (isAdmin) return; // Admin nemůže vybírat stoly
-    
+    if (isAdmin) {
+      // Pokud je admin a stůl je rezervovaný, zobraz detail rezervace
+      if (table.status === 'reserved' || table.status === 'permanent' || reservations.some(r => r.tableIds.includes(table.id))) {
+        onTableReservationClick && onTableReservationClick(table.id);
+      }
+      return;
+    }
     // Kontrolujeme, zda má stůl schválenou rezervaci (ne čekající)
     const hasApprovedReservation = reservations.some(r => 
       r.tableIds.includes(table.id) && r.status === 'approved'
     );
-    
     // Nelze vybrat stoly, které mají schválenou rezervaci
     if (table.status === 'available' && !hasApprovedReservation) {
       const newSelected = selectedTables.includes(table.id)

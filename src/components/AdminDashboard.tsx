@@ -6,12 +6,14 @@ import { getReservations, updateReservation, deleteReservation, deleteAllReserva
 import { sendApprovalEmail, sendCancelledEmail } from '@/lib/email';
 import { Check, X, Trash2, AlertTriangle, Edit } from 'lucide-react';
 import TableGrid from './TableGrid';
+import InfoModal from './InfoModal';
 
 export default function AdminDashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState<string | null>(null);
   const [editorMode, setEditorMode] = useState(false);
+  const [reservationDetail, setReservationDetail] = useState<Reservation | null>(null); // nový stav
 
   useEffect(() => {
     loadReservations();
@@ -131,6 +133,12 @@ export default function AdminDashboard() {
     }
   };
 
+  // Funkce pro zobrazení detailu rezervace podle tableId
+  const handleTableReservationClick = (tableId: string) => {
+    const found = reservations.find(r => r.tableIds.includes(tableId));
+    if (found) setReservationDetail(found);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -140,13 +148,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6 text-black">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Administrace rezervací</h1>
+        <h1 className="text-3xl font-bold text-black">Administrace rezervací</h1>
         <div className="flex gap-2">
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 flex items-center gap-2"
+            className="px-4 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 flex items-center gap-2"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12a7.5 7.5 0 0113.5-5.303M4.5 12V7.5m0 4.5h4.5m10.5 0a7.5 7.5 0 01-13.5 5.303M19.5 12v4.5m0-4.5h-4.5" />
@@ -155,7 +163,7 @@ export default function AdminDashboard() {
           </button>
           <button
             onClick={() => setEditorMode((v) => !v)}
-            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${editorMode ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700'} hover:bg-blue-700 hover:text-white`}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${editorMode ? 'bg-blue-600 text-white' : 'bg-gray-100 text-black'} hover:bg-blue-700 hover:text-white`}
           >
             <Edit className="h-4 w-4" />
             Editor
@@ -185,10 +193,11 @@ export default function AdminDashboard() {
         isAdmin={true}
         editorMode={editorMode}
         onEditTable={handleEditTable}
+        onTableReservationClick={handleTableReservationClick} // nový prop
       />
 
       {reservations.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="text-center py-12 text-black">
           <AlertTriangle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500">Žádné rezervace nebyly nalezeny</p>
         </div>
@@ -197,12 +206,12 @@ export default function AdminDashboard() {
           {reservations.map((reservation) => (
             <div
               key={reservation.id}
-              className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
+              className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm text-black"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
                   <div className="flex items-center space-x-4 mb-2">
-                    <h3 className="text-lg font-semibold">
+                    <h3 className="text-lg font-semibold text-black">
                       {reservation.firstName} {reservation.lastName}
                     </h3>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(reservation.status)}`}>
@@ -257,6 +266,21 @@ export default function AdminDashboard() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+      {/* Modal s detailem rezervace */}
+      {reservationDetail && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md text-black">
+            <h2 className="text-2xl font-bold mb-4 text-center text-black">Detail rezervace</h2>
+            <div className="mb-2"><strong>Jméno:</strong> <span className="text-black">{reservationDetail.firstName} {reservationDetail.lastName}</span></div>
+            <div className="mb-2"><strong>E-mail:</strong> {reservationDetail.email}</div>
+            <div className="mb-2"><strong>Telefon:</strong> {reservationDetail.phone}</div>
+            <div className="mb-2"><strong>Stoly:</strong> {reservationDetail.tableIds.join(', ')}</div>
+            <div className="mb-2"><strong>Vytvořeno:</strong> {reservationDetail.createdAt.toLocaleString('cs-CZ')}</div>
+            <div className="mb-2"><strong>Status:</strong> {reservationDetail.status}</div>
+            <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-full" onClick={() => setReservationDetail(null)}>Zavřít</button>
+          </div>
         </div>
       )}
     </div>
