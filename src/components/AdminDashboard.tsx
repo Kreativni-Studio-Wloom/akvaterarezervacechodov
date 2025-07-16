@@ -70,7 +70,8 @@ export default function AdminDashboard() {
     setProcessing(reservationId);
     try {
       const reservation = reservations.find(r => r.id === reservationId);
-      if (reservation && reservation.status === 'approved') {
+      // Pošli e-mail o zrušení pouze pokud status není 'rejected'
+      if (reservation && reservation.status !== 'rejected') {
         await sendCancelledEmail(reservation.email, reservation.firstName, reservation.lastName, reservation.tableIds);
       }
       await deleteReservation(reservationId);
