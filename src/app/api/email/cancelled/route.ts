@@ -7,10 +7,10 @@ export async function POST(request: Request) {
   try {
     const { email, firstName, lastName, tableIds } = await request.json();
 
-    const subject = 'Zrušení schválené rezervace stolů';
+    const subject = 'Zrušení rezervace';
     const html = `
       <h2>Dobrý den ${firstName} ${lastName},</h2>
-      <p>Vaše schválená rezervace byla zrušena administrátorem.</p>
+      <p>Vaše rezervace byla zrušena administrátorem.</p>
       <p>Počet zrušených stolů: ${tableIds.length}</p>
       <p>Stoly jsou nyní opět volné pro rezervaci.</p>
       <p>V případě dotazů nás kontaktujte na <a href="mailto:${process.env.FROM_EMAIL}">${process.env.FROM_EMAIL}</a></p>

@@ -143,7 +143,7 @@ const getCancelledEmailHTML = (firstName: string, lastName: string, tableIds: st
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Zrušení schválené rezervace</title>
+    <title>Zrušení rezervace</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
@@ -156,12 +156,12 @@ const getCancelledEmailHTML = (firstName: string, lastName: string, tableIds: st
 <body>
     <div class="container">
         <div class="header">
-            <h1>Zrušení schválené rezervace</h1>
+            <h1>Zrušení rezervace</h1>
         </div>
         <div class="content">
             <p>Dobrý den ${firstName} ${lastName},</p>
             <div class="highlight">
-                <strong>Vaše schválená rezervace byla zrušena administrátorem.</strong><br>
+                <strong>Vaše rezervace byla zrušena administrátorem.</strong><br>
                 Počet zrušených stolů: ${tableIds.length}
             </div>
             <p>Stoly jsou nyní opět volné pro rezervaci.</p>
@@ -176,11 +176,11 @@ const getCancelledEmailHTML = (firstName: string, lastName: string, tableIds: st
 `;
 
 const getCancelledEmailText = (firstName: string, lastName: string, tableIds: string[]) => `
-Zrušení schválené rezervace
+Zrušení rezervace
 
 Dobrý den ${firstName} ${lastName},
 
-Vaše schválená rezervace byla zrušena administrátorem.
+Vaše rezervace byla zrušena administrátorem.
 Počet zrušených stolů: ${tableIds.length}
 
 Stoly jsou nyní opět volné pro rezervaci.
@@ -214,7 +214,7 @@ export const sendApprovalEmail = async (email: string, firstName: string, lastNa
 }; 
 
 export const sendCancelledEmail = async (email: string, firstName: string, lastName: string, tableIds: string[]) => {
-  const subject = 'Zrušení schválené rezervace stolů';
+  const subject = 'Zrušení rezervace';
   const html = getCancelledEmailHTML(firstName, lastName, tableIds);
   const text = getCancelledEmailText(firstName, lastName, tableIds);
   await fetch('/api/email', {
