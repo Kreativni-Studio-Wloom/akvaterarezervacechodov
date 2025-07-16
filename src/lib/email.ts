@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-const ADMIN_EMAIL = 'grigar.adam@gmail.com';
+const ADMIN_EMAIL = process.env.EMAIL_FROM || 'info@rajmazlicku.eu';
 
 const getConfirmationEmailHTML = (firstName: string, lastName: string, tableIds: string[]) => `
 <!DOCTYPE html>
@@ -38,7 +38,7 @@ const getConfirmationEmailHTML = (firstName: string, lastName: string, tableIds:
             <p>V případě dotazů nás kontaktujte na <a href="mailto:${ADMIN_EMAIL}">${ADMIN_EMAIL}</a></p>
         </div>
         <div class="footer">
-            <p>Rezervace stolů - grigar.adam@gmail.com</p>
+            <p>Rezervace stolů - ${ADMIN_EMAIL}</p>
         </div>
     </div>
 </body>
@@ -86,7 +86,7 @@ const getApprovalEmailHTML = (firstName: string, lastName: string, approved: boo
             <p>V případě dotazů nás kontaktujte na <a href="mailto:${ADMIN_EMAIL}">${ADMIN_EMAIL}</a></p>
         </div>
         <div class="footer">
-            <p>Rezervace stolů - grigar.adam@gmail.com</p>
+            <p>Rezervace stolů - ${ADMIN_EMAIL}</p>
         </div>
     </div>
 </body>
@@ -109,7 +109,7 @@ O výsledku Vás budeme informovat e-mailem.
 V případě dotazů nás kontaktujte na ${ADMIN_EMAIL}
 
 --
-Rezervace stolů - grigar.adam@gmail.com
+Rezervace stolů - ${ADMIN_EMAIL}
 `;
 
 const getApprovalEmailText = (firstName: string, lastName: string, approved: boolean, tableIds: string[]) => `
@@ -135,7 +135,7 @@ Stoly jsou nyní opět volné pro rezervaci.`
 V případě dotazů nás kontaktujte na ${ADMIN_EMAIL}
 
 --
-Rezervace stolů - grigar.adam@gmail.com
+Rezervace stolů - ${ADMIN_EMAIL}
 `;
 
 const getCancelledEmailHTML = (firstName: string, lastName: string, tableIds: string[]) => `
@@ -168,7 +168,7 @@ const getCancelledEmailHTML = (firstName: string, lastName: string, tableIds: st
             <p>V případě dotazů nás kontaktujte na <a href="mailto:${ADMIN_EMAIL}">${ADMIN_EMAIL}</a></p>
         </div>
         <div class="footer">
-            <p>Rezervace stolů - grigar.adam@gmail.com</p>
+            <p>Rezervace stolů - ${ADMIN_EMAIL}</p>
         </div>
     </div>
 </body>
@@ -188,7 +188,7 @@ Stoly jsou nyní opět volné pro rezervaci.
 V případě dotazů nás kontaktujte na ${ADMIN_EMAIL}
 
 --
-Rezervace stolů - grigar.adam@gmail.com
+Rezervace stolů - ${ADMIN_EMAIL}
 `;
 
 export const sendConfirmationEmail = async (email: string, firstName: string, lastName: string, tableIds: string[]) => {

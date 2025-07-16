@@ -5,16 +5,18 @@ export async function POST(req: NextRequest) {
   const { to, subject, html, text } = await req.json();
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.seznam.cz',
+    port: 465,
+    secure: true,
     auth: {
-      user: 'grigar.adam@gmail.com',
-      pass: process.env.GMAIL_APP_PASSWORD,
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
     },
   });
 
   await transporter.sendMail({
-    from: 'Rezervace stolů <grigar.adam@gmail.com>',
-    to: [to, 'grigar.adam@gmail.com'],
+    from: `Rezervace stolů <${process.env.EMAIL_FROM}>`,
+    to: [to, process.env.EMAIL_FROM],
     subject,
     text,
     html,
